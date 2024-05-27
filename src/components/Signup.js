@@ -1,57 +1,43 @@
 import { VStack,Input,FormLabel, FormControl,Button,Text,Heading,Center,useToast} from "@chakra-ui/react";
-import { useState } from "react";
-import { useNavigate,Link } from "react-router-dom";
-import { UnlockIcon } from "@chakra-ui/icons";
+import {Link } from "react-router-dom";
+import React, { useState } from "react";
+import axios from "axios";
 
 export default function Signup(){
+    const [user_email, setEmail] = useState("");
+    const [user_password, setPassword] = useState("");
+    const [message, setMessage] = useState("");
 
-    const navigate=useNavigate();
-    const toast=useToast()
-
-    const[user_email,setEmail]=useState("");
-    const[user_password,setPassword]=useState("");
-
-    const showToast=(message,status)=>{
-        toast({
-          title:message,
-        //   description:"Successfully logged out",
-          duration:3000,
-          isClosable:true,
-          status:status,
-          position:"top",
-          icon:<UnlockIcon/>
-        });
-      }
-
-    async function registerUser(e){
-        e.preventDefault();
-        const response =await fetch("http://localhost:1001/api/register",{
-            method:"POST",
-            headers:{
-                'Content-Type':'application/json'
-            },
-            body:JSON.stringify({
-                user_email,
-                user_password
-            })
-        })
-
-        const data=await response.json()
-        console.log(data);
-        if(data.status==="ok"){
-            showToast("Account created","success");
-            navigate("/login");
-        }else if(data.status==="error" & data.error==="Duplicate email"){
-            showToast("Email exist on our database","info");
-            navigate("/login");
-        }else{
-            showToast("Failed to create account","error")
-            navigate('/signup');
-        }
+    const toast=useToast();
+    const showToast=(title,message,status)=>{
+      toast({
+        title:title,
+        description:message,
+        duration:3000,
+        isClosable:true,
+        status:status,
+        position:"top",
+      });
     }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+          const response = await axios.post("/api/auth/register", {
+            user_email,
+            user_password,
+          });
+          setMessage(response.data.message);
+          showToast("SignUp Successful",response.data.message,"success")
+        } catch (error) {
+          console.error("Registration failed:", error.response.data.error);
+          setMessage(error.response.data.error);
+          showToast("Failed SignUp",error.response.data.error,"error")
+        }
+      };
     return(
         <Center>
-        <form onSubmit={registerUser}>
+        <form onSubmit={handleSubmit}>
             <Heading  as="h5"size="0.5rem" py="2rem">Namaste🙏! Please create your Account😊</Heading>
             <VStack width="20rem" spacing="1.5rem" >
                 <FormControl isRequired>

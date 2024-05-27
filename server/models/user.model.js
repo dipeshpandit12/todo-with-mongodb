@@ -1,14 +1,33 @@
-const mongoose=require("mongoose");
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
-const User=new mongoose.Schema({
-    user_email:{type:String,require:true},
-    user_password:{type:String,require:true,unique:true},
-    quote:{type:String}
-},{
-    collection:'user-data'
-})
+const userSchema = new mongoose.Schema({
+  user_email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
+  user_password: {
+    type: String,
+    required: true,
+  },
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+});
 
+userSchema.methods.verifyPassword = async function (user_password) {
+  const user = this;
+  const isMatch = await bcrypt.compare(user_password, user.user_password);
+  return isMatch;
+};
 
-const model=mongoose.model("UserData",User)
+const User = mongoose.model("User", userSchema);
 
-module.exports=model;
+module.exports = User;
