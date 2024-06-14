@@ -1,4 +1,4 @@
-import { Flex,HStack,Heading,Spacer,Hide, Avatar, AvatarBadge,Text,Button} from '@chakra-ui/react';
+import { Flex,HStack,Heading,Spacer,Button} from '@chakra-ui/react';
 import { Link,} from 'react-router-dom';
 import React, { useContext} from 'react';
 import { AuthContext } from './AuthContext';
@@ -22,14 +22,6 @@ export default function Navbar({token}) {
         <Heading as='h1' color="white"><Link to="/">Todo List</Link></Heading>
         <Spacer/>
         <HStack spacing="1rem">
-            <Avatar name='avatar'>
-              <AvatarBadge width="1.6rem" bg="teal.500">
-                <Text fontSize="xs" color="white">N</Text>
-              </AvatarBadge>
-            </Avatar>
-            <Hide below="lg">
-            <Text >dip</Text>
-            </Hide>
             <Button colorScheme='red' onClick={handleSubmit}>Logout</Button>
         </HStack>
     </Flex>
